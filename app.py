@@ -15,6 +15,11 @@ ENVIRONMENT VARIABLES (set these on Render, don't hardcode them):
     API_HASH        - string, from my.telegram.org
     SESSION_STRING  - generated once by running generate_session.py locally
     TARGET_BOT      - @username of the other bot, e.g. @the_other_bot
+    ALLOWED_ORIGIN  - your website's exact URL, e.g. https://srtxcheats.pages.dev
+    RELAY_KEY       - a random string only your own frontend knows (pick
+                      anything long and unguessable — this isn't a real
+                      Telegram credential, just a shared password between
+                      your site and this server)
 
 Why a session STRING instead of a session FILE: Render's disk resets
 on every deploy, so a saved .session file would vanish and you'd have
@@ -36,13 +41,15 @@ API_ID = int(os.environ["API_ID"])
 API_HASH = os.environ["API_HASH"]
 SESSION_STRING = os.environ["SESSION_STRING"]
 TARGET_BOT = os.environ.get("TARGET_BOT", "@the_other_bot")
+ALLOWED_ORIGIN = os.environ["ALLOWED_ORIGIN"]
+RELAY_KEY = os.environ["RELAY_KEY"]
 
 POLL_TIMEOUT = 20   # overall seconds to wait before giving up
 POLL_INTERVAL = 1   # seconds between checks
 QUIET_PERIOD = 3    # seconds of silence that means the bot is done sending
 
 app = Flask(__name__)
-CORS(app)  # allows your website (a different domain) to call this API
+CORS(app, origins=[ALLOWED_ORIGIN])  # only your own site's JS can call this
 
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
 client.connect()
@@ -94,6 +101,9 @@ def pick_result(replies):
 
 @app.route("/api/bypass", methods=["POST"])
 def bypass():
+    if request.headers.get("X-Relay-Key") != RELAY_KEY:
+        return jsonify({"error": "Forbidden"}), 403
+
     data = request.get_json(silent=True) or {}
     link = (data.get("link") or "").strip()
     if not link:
