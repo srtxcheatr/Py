@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRT X CHEATS — Link Relay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06090b;
+    --surface: #0d1416;
+    --surface-2: #121b1e;
+    --border: #1c2c2f;
+    --text: #d9e6e2;
+    --text-dim: #79918c;
+    --accent: #2de1c2;
+    --accent-warm: #ffa53e;
+    --error: #ff6b6b;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px,
+      transparent 1px, transparent 3px
+    );
+    z-index: 999;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+
+  /* ---------- boot overlay ---------- */
+  #boot {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #boot.hidden { opacity: 0; visibility: hidden; }
+  #boot-lines {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--accent);
+    white-space: pre-wrap;
+  }
+  #boot-lines .dim { color: var(--text-dim); }
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--accent);
+    margin-left: 2px;
+    animation: blink 0.9s steps(1) infinite;
+    vertical-align: middle;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- layout ---------- */
+  main { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 24px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .brand {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+  }
+  .brand span { color: var(--accent); }
+  nav a.cta {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 3px;
+    color: var(--text);
+  }
+  nav a.cta:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 88px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    max-width: 11ch;
+    margin-bottom: 22px;
+  }
+  .hero p {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    max-width: 46ch;
+    margin-bottom: 34px;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--accent);
+    color: #06090b;
+    padding: 13px 22px;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+
+  /* ---------- terminal / tool ---------- */
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 40px 0 96px;
+    box-shadow: 0 40px 80px -40px rgba(45, 225, 194, 0.08);
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #33403f; }
+  .term-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-left: 8px;
+  }
+  .term-body { padding: 26px; }
+
+  #bypass-form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .prompt-wrap {
+    flex: 1 1 260px;
+    display: flex;
+    align-items: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0 12px;
+  }
+  .prompt-wrap span {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    margin-right: 8px;
+  }
+  #link-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 13px 0;
+  }
+  #link-input::placeholder { color: var(--text-dim); }
+
+  #run-btn {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--accent);
+    color: #06090b;
+    border: none;
+    border-radius: 4px;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  #run-btn:disabled { opacity: 0.6; cursor: default; }
+
+  #output {
+    margin-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    min-height: 24px;
+  }
+  #output .line { display: block; margin-bottom: 6px; word-break: break-all; }
+  #output .dim { color: var(--text-dim); }
+  #output .accent { color: var(--accent); }
+  #output .error { color: var(--error); }
+  #output .result { color: var(--text); font-weight: 500; }
+
+  #copy-btn {
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  #copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---------- how it works ---------- */
+  .steps { padding-bottom: 96px; }
+  .steps h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin-bottom: 34px;
+  }
+  .step {
+    display: flex;
+    gap: 18px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: 1px solid var(--border); }
+  .step-num {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 13px;
+    padding-top: 2px;
+  }
+  .step-text h3 {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .step-text p { color: var(--text-dim); font-size: 0.92rem; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0 40px;
+  }
+  footer p {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div id="boot">
+  <div id="boot-lines"></div>
+</div>
+
+<nav>
+  <div class="brand">srt<span>×</span>cheats / relay</div>
+  <a class="cta" href="#tool">open relay</a>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">// link relay</div>
+    <h1>Skip the redirect. Get the real link.</h1>
+    <p>Paste a locked or shortened link below. The relay forwards it through a live session and hands back the destination — no ads, no waiting rooms.</p>
+    <a href="#tool" class="btn-primary">Open the relay →</a>
+  </section>
+
+  <section id="tool">
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="term-label">relay@srtxcheats: ~</div>
+      </div>
+      <div class="term-body">
+        <form id="bypass-form">
+          <div class="prompt-wrap">
+            <span>$</span>
+            <input type="text" id="link-input" placeholder="paste link here" autocomplete="off" required>
+          </div>
+          <button type="submit" id="run-btn">run bypass</button>
+        </form>
+        <div id="output"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="steps">
+    <h2>How it works</h2>
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-text">
+        <h3>Paste your link</h3>
+        <p>Drop any shortened or ad-locked link into the relay above.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-text">
+        <h3>The relay forwards it</h3>
+        <p>Your link is sent through a live session and processed.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-text">
+        <h3>Clean link streams back</h3>
+        <p>The result decrypts into view — copy it and go.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>srt × cheats — built mobile-only, running on Termux.</p>
+  </footer>
+</main>
+
+<script>
+  // ---------- boot sequence ----------
+  const bootLines = [
+    { text: "> booting srt x cheats relay...", dim: false },
+    { text: "> loading link decoder module...", dim: true },
+    { text: "> establishing session...", dim: true },
+    { text: "> relay online. ready for input", dim: false },
+  ];
+  const bootEl = document.getElementById('boot-lines');
+  const boot = document.getElementById('boot');
+
+  async function typeLine(line) {
+    return new Promise(resolve => {
+      const span = document.createElement('div');
+      if (line.dim) span.className = 'dim';
+      bootEl.appendChild(span);
+      let i = 0;
+      const t = setInterval(() => {
+        span.textContent = line.text.slice(0, i);
+        i++;
+        if (i > line.text.length) { clearInterval(t); resolve(); }
+      }, 14);
+    });
+  }
+
+  (async () => {
+    for (const line of bootLines) await typeLine(line);
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    bootEl.appendChild(cursor);
+    await new Promise(r => setTimeout(r, 500));
+    boot.classList.add('hidden');
+  })();
+
+  // ---------- bypass tool ----------
+  // TODO: replace with your deployed backend URL, e.g.
+  // "https://your-app.onrender.com/api/bypass"
+  const API_URL = "https://your-app.onrender.com/api/bypass";
+
+  const form = document.getElementById('bypass-form');
+  const input = document.getElementById('link-input');
+  const output = document.getElementById('output');
+  const runBtn = document.getElementById('run-btn');
+
+  function appendLine(text, cls) {
+    const line = document.createElement('span');
+    line.className = 'line' + (cls ? ' ' + cls : '');
+    line.textContent = text;
+    output.appendChild(line);
+    return line;
+  }
+
+  function scrambleReveal(el, finalText, duration = 700) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%/:.-";
+    const steps = 18;
+    let frame = 0;
+    const len = finalText.length;
+    const t = setInterval(() => {
+      frame++;
+      const revealCount = Math.floor((frame / steps) * len);
+      let out = "";
+      for (let i = 0; i < len; i++) {
+        out += i < revealCount ? finalText[i] : chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = out;
+      if (frame >= steps) { clearInterval(t); el.textContent = finalText; }
+    }, duration / steps);
+  }
+
+  function addCopyButton(text) {
+    const btn = document.createElement('button');
+    btn.id = 'copy-btn';
+    btn.textContent = 'copy link';
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(text);
+      btn.textContent = 'copied';
+      setTimeout(() => (btn.textContent = 'copy link'), 1200);
+    });
+    output.appendChild(btn);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const link = input.value.trim();
+    if (!link) return;
+
+    runBtn.disabled = true;
+    runBtn.textContent = 'running...';
+    output.innerHTML = '';
+    appendLine(`$ sending ${link}`, 'dim');
+    appendLine('> awaiting relay response...', 'dim');
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `request failed (${res.status})`);
+
+      appendLine('> done.', 'accent');
+      const resultLine = appendLine('', 'result');
+      scrambleReveal(resultLine, data.result || '(empty response)');
+      addCopyButton(data.result || '');
+    } catch (err) {
+      appendLine(`$ error: ${err.message}`, 'error');
+    } finally {
+      runBtn.disabled = false;
+      runBtn.textContent = 'run bypass';
+    }
+  });
+</script>
+
+</body>
+</html>
